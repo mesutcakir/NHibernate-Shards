@@ -81,25 +81,25 @@ namespace NHibernate.Shards.Demo
                     };
                     session.Save(report);
 
-                    //report = new WeatherReport
-                    //{
-                    //    Continent = "Africa",
-                    //    Latitude = 44,
-                    //    Longitude = 99,
-                    //    ReportTime = DateTime.Now,
-                    //    Temperature = 31
-                    //};
-                    //session.Save(report);
+                    report = new WeatherReport
+                    {
+                        Continent = "Africa",
+                        Latitude = 44,
+                        Longitude = 99,
+                        ReportTime = DateTime.Now,
+                        Temperature = 31
+                    };
+                    session.Save(report);
 
-                    //report = new WeatherReport
-                    //{
-                    //    Continent = "Asia",
-                    //    Latitude = 13,
-                    //    Longitude = 12,
-                    //    ReportTime = DateTime.Now,
-                    //    Temperature = 104
-                    //};
-                    //session.Save(report);
+                    report = new WeatherReport
+                    {
+                        Continent = "Asia",
+                        Latitude = 13,
+                        Longitude = 12,
+                        ReportTime = DateTime.Now,
+                        Temperature = 104
+                    };
+                    session.Save(report);
                 }
                 session.Transaction.Commit();
             }
