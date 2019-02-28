@@ -6,12 +6,12 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Mappings.hbm.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\NHibernate.Shards\NHibernate.Shards.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="FluentNHibernate" Version="2.1.2" />
   </ItemGroup>
 </Project>
