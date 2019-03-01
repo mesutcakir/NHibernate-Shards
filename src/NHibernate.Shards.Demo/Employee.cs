@@ -30,17 +30,6 @@ namespace NHibernate.Shards.Demo
             Map(x => x.ShardId);
         }
     }
-    public class DayBase : BaseEntity
-    {
-        public virtual DateTime Date { get; set; }
-    }
-    public class DayBaseMap : BaseEntityMap<DayBase>
-    {
-        public DayBaseMap()
-        {
-            Map(x => x.Date);
-        }
-    }
     #endregion
 
 
@@ -60,6 +49,18 @@ namespace NHibernate.Shards.Demo
             References(x => x.Firm, "FirmId").ForeignKey("FK_BaseEntity_" + typeName + "Id");
         }
     }
+
+    //public class DateBase : FirmBaseEntity
+    //{
+    //    public virtual DateTime Date { get; set; }
+    //}
+    //public class DayBaseMap : FirmBaseEntityMap<DateBase>
+    //{
+    //    public DayBaseMap()
+    //    {
+    //        Map(x => x.Date);
+    //    }
+    //}
     public class Employee : FirmBaseEntity
     {
         public virtual string Name { get; set; }
@@ -92,14 +93,14 @@ namespace NHibernate.Shards.Demo
     {
         public virtual string Name { get; set; }
         public virtual Project Project { get; set; }
-        public virtual DayBase DayBase { get; set; }
+        //public virtual DateBase DateBase { get; set; }
     }
     public class TaskMap : FirmBaseEntityMap<Task>
     {
         public TaskMap()
         {
             Map(x => x.Name);
-            References(x => x.DayBase, "DayBaseId").ForeignKey("FK_Task_DayBaseId");
+            //References(x => x.DateBase, "DayBaseId").ForeignKey("FK_Task_DayBaseId");
             References(x => x.Project, "ProjectId").ForeignKey("FK_Task_ProjectId");
         }
     }
