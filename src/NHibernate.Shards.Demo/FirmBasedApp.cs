@@ -47,8 +47,15 @@ namespace NHibernate.Shards.Demo
                 try
                 {
                     var criteria = session.QueryOver<Employee>();
-                    Console.WriteLine("TotalRow=" + criteria.RowCount());
-                    Console.WriteLine("TotalRow=" + criteria.Where(x => x.Age > 33).RowCount());
+                    Console.WriteLine("QueryOver Total=" + criteria.RowCount());
+                    Console.WriteLine("QueryOver Age>33 Total=" + criteria.Where(x => x.Age > 33).RowCount());
+
+                    var totalCount = session.CreateSQLQuery(@"select count(*) from Employee").List<int>();
+                    //var totalCount = session.CreateSQLQuery(@"select count(*) from Employee").UniqueResult<int>();
+
+                    var criterCount = session.CreateSQLQuery(@"select count(*) from Employee where Age>33").List<int>();
+                    Console.WriteLine("SQL Total=" + totalCount.Sum());
+                    Console.WriteLine("SQL Age>33 Total=" + criterCount.Sum());
                 }
                 finally
                 {
