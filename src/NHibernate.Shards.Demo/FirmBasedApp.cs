@@ -91,14 +91,14 @@ namespace NHibernate.Shards.Demo
         }
 
         private Task CreateTask(ISession session, Project project, string name
-            //,DayBase dayBase
+            , DayBase dayBase
             )
         {
             var createTask = new Task
             {
                 Project = project,
                 Name = name,
-                //DayBase = dayBase
+                DayBase = dayBase
             };
             createTask.Id = (Guid)session.Save(createTask);
             return createTask;
@@ -109,7 +109,7 @@ namespace NHibernate.Shards.Demo
             var session = this.sessionFactory.OpenSession();
             try
             {
-                //var dayBases = new List<DayBase>();
+                var dayBases = new List<DayBase>();
                 Firm firm1, firm2, firm3;
                 using (var tr = session.BeginTransaction())
                 {
@@ -121,14 +121,14 @@ namespace NHibernate.Shards.Demo
                     session.Save(firm3);
                     session.Save(firm1);
 
-                    //var start = new DateTime(2018, 1, 1);
-                    //while (start < new DateTime(2019, 1, 1))
-                    //{
-                    //    var date = new DayBase() { Date = start, ShardId = 0 };
-                    //    session.Save(date);
-                    //    dayBases.Add(date);
-                    //    start = start.AddDays(1);
-                    //}
+                    var start = new DateTime(2018, 1, 1);
+                    while (start < new DateTime(2019, 1, 1))
+                    {
+                        var date = new DayBase() { Date = start };
+                        session.Save(date);
+                        dayBases.Add(date);
+                        start = start.AddDays(1);
+                    }
 
                     tr.Commit();
                 }
@@ -165,7 +165,7 @@ namespace NHibernate.Shards.Demo
                         for (int i = 1; i <= 5; i++)
                         {
                             CreateTask(session, project, "Task" + i + " - " + project.Name
-                            //,dayBases[i]
+                            ,dayBases[i]
                             );
                         }
                     }
@@ -186,11 +186,17 @@ namespace NHibernate.Shards.Demo
                   .Mappings(m => m.FluentMappings.AddFromAssemblyOf<EmployeeMap>())
                   .Database(MsSqlConfiguration.MsSql2008.Dialect<MsSql2008Dialect>())
                   .BuildConfiguration();
-
-
+            
             var shardConfigs = BuildShardConfigurations();
             var shardStrategyFactory = BuildShardStrategyFactory();
-            return new ShardedConfiguration(prototypeConfig, shardConfigs, shardStrategyFactory);
+            var virtualShardMap = new Dictionary<short, short>
+            {
+                //{ 0, 0 },
+                //{ 1, 0 },
+                //{ 2, 0 },
+                //{ 3, 0 }
+            };
+            return new ShardedConfiguration(prototypeConfig, shardConfigs, shardStrategyFactory, virtualShardMap);
         }
 
         private IEnumerable<IShardConfiguration> BuildShardConfigurations()
@@ -207,7 +213,7 @@ namespace NHibernate.Shards.Demo
             var connectionStringTemplate = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
 
             return new ShardConfiguration
-            {
+            {                
                 ShardSessionFactoryName = firmKey + "Shard",
                 ShardId = shardId,
                 ConnectionString = string.Format(connectionStringTemplate, firmKey)
@@ -236,6 +242,13 @@ namespace NHibernate.Shards.Demo
             if (obj is Firm firm)
             {
                 var shard = this.loadBalancer.ShardIds.SingleOrDefault(x => x.Id == firm.ShardId);
+                if (shard == null)
+                    throw new NotSupportedException("Only BaseEntity inherits");
+                return shard;
+            }
+            if (obj is DayBase dayBase)
+            {
+                var shard = this.loadBalancer.ShardIds[0];
                 if (shard == null)
                     throw new NotSupportedException("Only BaseEntity inherits");
                 return shard;
