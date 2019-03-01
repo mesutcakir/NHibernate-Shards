@@ -15,5 +15,6 @@
     <PackageReference Include="FluentNHibernate" Version="2.1.2" />
     <PackageReference Include="log4net" Version="2.0.8" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="NHibernate.Envers" Version="5.2.1" />
   </ItemGroup>
 </Project>

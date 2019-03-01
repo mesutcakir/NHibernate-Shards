@@ -25,6 +25,7 @@ namespace NHibernate.Shards.Demo
 {
     internal class FirmBasedApp
     {
+        public static bool IsUseEnverse = true;
         private ISessionFactory sessionFactory;
 
         public static void Main(string[] args)
@@ -192,6 +193,15 @@ namespace NHibernate.Shards.Demo
                   .Mappings(m => m.FluentMappings.AddFromAssemblyOf<EmployeeMap>())
                   .Database(MsSqlConfiguration.MsSql2008.Dialect<MsSql2008Dialect>())
                   .BuildConfiguration();
+            if (IsUseEnverse)
+            {
+                var envelopersConf = new NHibernate.Envers.Configuration.Fluent.FluentConfiguration();
+                envelopersConf.Audit<Firm>();
+                envelopersConf.Audit<Employee>();
+                envelopersConf.Audit<Project>();
+                envelopersConf.Audit<Task>();
+                prototypeConfig.IntegrateWithEnvers(envelopersConf);
+            }
 
             var shardConfigs = BuildShardConfigurations();
             var shardStrategyFactory = BuildShardStrategyFactory();
